@@ -14,6 +14,18 @@ SUDO=sudo
 mkdir -p ~/packages
 cd ~/packages
 
+if [ ! -x "$(command -v cfssl)" ] ;  then
+  $SUDO apt-get install -y golang-cfssl
+fi
+
+if [ ! -x "$(command -v kubectl)" ] ;  then
+  wget -O - https://packages.cloud.google.com/apt/doc/apt-key.gpg | $SUDO apt-key add -
+  $SUDO touch /etc/apt/sources.list.d/kubernetes.list
+  echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | $SUDO tee -a /etc/apt/sources.list.d/kubernetes.list
+  $SUDO apt-get update
+  $SUDO apt-get install -y kubectl
+fi
+
 if [ ! -x "$(command -v chef)" ] ;  then
   # Find version from https://downloads.chef.io/chef-workstation/
   CHEF_WORKSTATION_MAJOR_VERSION=0.17.5

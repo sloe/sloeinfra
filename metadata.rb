@@ -18,5 +18,8 @@ chef_version '>= 14.0'
 #
 # source_url 'https://github.com/<insert_org_here>/sloeinfra'
 
+depends 'conntrack', '~> 0.2.2'
+depends 'docker'
 depends 'etcd'
+depends 'minikube', '~> 0.1.1'
 depends 'vagrant', '~> 2.0.1'
