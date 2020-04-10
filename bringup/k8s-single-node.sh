@@ -1,5 +1,5 @@
 #!/bin/bash
-# Ubuntu Hyper-V workstation
+# Kubernetes single node
 
 set -e
 trap 'catch $? $LINENO' EXIT
@@ -9,22 +9,7 @@ catch() {
   fi
 }
 
-UBUNTU_VERSION=`lsb_release -rs`
-
-if [ ! -f ~/.ssh/id_rsa.pub ] ; then
-  cat /dev/zero | ssh-keygen -q -N ""
-fi
-
 SUDO=sudo
-if [ ! -x "$(command -v gitk)" ] ;  then
-  $SUDO apt-get install -y chef git gitk vim
-fi
-
-if [ ! -x "$(command -v code)" ] ;  then
-  $SUDO snap install --classic code
-  code --install-extension chef-software.chef
-  code --install-extension eamodio.gitlens
-fi
 
 mkdir -p ~/packages
 cd ~/packages
@@ -50,23 +35,9 @@ test -d sloeinfra || git clone https://github.com/sloe/sloeinfra.git
 
 cd sloeinfra
 
-
-if [ ! -f ~/.bash_aliases_local ] ; then
-  touch ~/.bash_aliases_local
-  if [ -f ~/.bash_aliases ] ; then
-    cat ~/.bash_aliases > ~/.bash_aliases_local
-  fi
-fi
-
-cp -fpR ~/.bash_aliases_local ~/.bash_aliases
-cat bringup/templates/linux-bash-aliases.sh >> ~/.bash_aliases
-cat bringup/templates/ubuntu-workstation-bash-aliases.sh >> ~/.bash_aliases
-
 berks vendor cookbooks
 
-sudo chef-client --local-mode --override-runlist sloeinfra::linux_workstation
-
-source ~/.bash_aliases
+sudo chef-client --local-mode --override-runlist sloeinfra::k8s_single_node
 
 echo
 echo "To work with modifiable sloeinfra repo, use"

@@ -18,4 +18,5 @@ chef_version '>= 14.0'
 #
 # source_url 'https://github.com/<insert_org_here>/sloeinfra'
 
+depends 'etcd'
 depends 'vagrant', '~> 2.0.1'

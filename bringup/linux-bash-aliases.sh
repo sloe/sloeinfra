@@ -1,0 +1,1 @@
+alias sloe_bringup="pushd ~/r/sloeinfra/bringup"
