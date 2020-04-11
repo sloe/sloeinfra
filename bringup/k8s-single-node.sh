@@ -23,7 +23,7 @@ if [ ! -x "$(command -v kubectl)" ] ;  then
   $SUDO touch /etc/apt/sources.list.d/kubernetes.list
   echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | $SUDO tee -a /etc/apt/sources.list.d/kubernetes.list
   $SUDO apt-get update
-  $SUDO apt-get install -y kubectl
+  $SUDO apt-get install -y kubeadm kubelet kubectl
 fi
 
 if [ ! -x "$(command -v chef)" ] ;  then
@@ -50,6 +50,8 @@ cd sloeinfra
 berks vendor cookbooks
 
 sudo chef-client --local-mode --override-runlist sloeinfra::k8s_single_node
+
+sudo gpasswd -a $USER docker
 
 echo
 echo "To work with modifiable sloeinfra repo, use"

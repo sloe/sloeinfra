@@ -1,1 +1,1 @@
-alias sloe_reinfra="source ~/r/sloeinfra/bringup/ubuntu-workstation.sh"
+alias sloe_reinfra="/bin/bash ~/r/sloeinfra/bringup/ubuntu-workstation.sh"
