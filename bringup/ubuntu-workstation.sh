@@ -24,6 +24,7 @@ if [ ! -x "$(command -v code)" ] ;  then
   $SUDO snap install --classic code
   code --install-extension chef-software.chef
   code --install-extension eamodio.gitlens
+  code --install-extension coolbear.systemd-unit-file
 fi
 
 mkdir -p ~/packages

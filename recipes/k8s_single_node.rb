@@ -23,9 +23,19 @@ include_recipe 'minikube'
 #   action :nothing
 # end
 
-
+script "packet_forwarding" do
+  interpreter "bash"
+  code <<-EOH
+    echo "# Added sloeinfra::k8s_single_node Chef recipe" >> /etc/sysctl.conf
+    echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+  EOH
+  not_if "grep '^net\.ipv4\.ip_forward=1' /etc/sysctl.conf"
+end
 
 docker_service 'default' do
+  dns ['1.1.1.1', '1.0.0.1']
+  dns_search []
+  ipv6 false
   action [:create, :start]
 end
 
@@ -60,7 +70,8 @@ end
 script "minikube_setup" do
   interpreter "bash"
   code <<-EOH
-    su sloeinfra -c "minikube start --vm-driver=docker --apiserver-ips 127.0.0.1 --apiserver-name localhost"
+    su sloeinfra -c "minikube start --alsologtostderr=false --apiserver-ips 127.0.0.1 \
+      --apiserver-name localhost --driver=docker --wait-timeout=2m0s"
     su sloeinfra -c "minikube addons enable ingress"
   EOH
   only_if "su sloeinfra -c 'minikube status' | grep -q 'There is no local cluster'"
@@ -70,7 +81,7 @@ script "minikube_restart" do
   interpreter "bash"
   code <<-EOH
     su sloeinfra -c "minikube stop"
-    su sloeinfra -c "minikube start"
+    su sloeinfra -c "minikube start --alsologtostderr=true --delete-on-failure=true --wait-timeout=2m0s"
   EOH
   not_if "su sloeinfra -c 'minikube status' | grep -q 'apiserver: Running'"
 end

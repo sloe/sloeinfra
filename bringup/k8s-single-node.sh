@@ -51,7 +51,9 @@ berks vendor cookbooks
 
 sudo chef-client --local-mode --override-runlist sloeinfra::k8s_single_node
 
-sudo gpasswd -a $USER docker
+if [ ! -x "$(command -v helm)" ] ;  then
+  $SUDO snap install --classic --channel=2.16/stable helm
+fi
 
 echo
 echo "To work with modifiable sloeinfra repo, use"
