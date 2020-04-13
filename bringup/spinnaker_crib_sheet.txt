@@ -1,0 +1,53 @@
+docker run -p 8084:8084 -p 9000:9000 \
+    --name halyard --rm \
+    -v ~/.hal:/home/spinnaker/.hal \
+    -v /home/sloeinfra:/home/spinnaker/sloeinfra \
+    -it \
+    gcr.io/spinnaker-marketplace/halyard:stable
+
+
+chmod -R 755 ~/.minikube
+chmod -R 755 ~/.kube
+ln -s ../.minikube .kube/.minikube
+
+docker exec -it halyard bash
+# In halyard container
+cd ~
+ln -s ~/sloeinfra/.minikube .minikube
+ln -s ~/sloeinfra/.kube .kube
+
+hal config provider kubernetes enable
+hal config features edit --artifacts true
+
+ACCOUNT=k8s-v2-account
+CONTEXT=$(kubectl config current-context)
+
+hal config provider kubernetes account add $ACCOUNT \
+    --provider-version v2 \
+    --context $CONTEXT
+
+hal config deploy edit --type distributed --account-name $ACCOUNT
+
+# Set up minio keys here
+chcon -R --reference /root/.bashrc /root/.hal/
+ls -lZa /root # Make sure the SELinux context is the same for all files/folders
+
+echo $MINIO_SECRET_KEY | hal config storage s3 edit --endpoint $ENDPOINT \
+    --access-key-id $MINIO_ACCESS_KEY \
+    --secret-access-key # will be read on STDIN to avoid polluting your
+                        # ~/.bash_history with a secret
+
+hal config storage edit --type s3
+
+hal version list
+VERSION=1.19.4
+hal config version edit --version $VERSION
+
+hal deploy apply
+# May need to run that again
+
+
+# If failure, back on host
+
+kubectl delete namespace spinnaker
+
