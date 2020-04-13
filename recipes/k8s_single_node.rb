@@ -43,13 +43,6 @@ docker_image 'busybox' do
   action :pull
 end
 
-docker_container 'an-echo-server' do
-  repo 'busybox'
-  port '1234:1234'
-  command "nc -ll -p 1234 -e /bin/cat"
-end
-
-
 group 'sloeinfra' do
   gid 10020
 end
@@ -70,10 +63,12 @@ end
 script "minikube_setup" do
   interpreter "bash"
   code <<-EOH
-    su sloeinfra -c "minikube start --alsologtostderr=false --apiserver-ips 127.0.0.1 \
-      --apiserver-name localhost --driver=docker --wait-timeout=2m0s"
-    su sloeinfra -c "minikube addons enable ingress"
-  EOH
+    su sloeinfra -c "minikube config set driver docker"
+    su sloeinfra -c "minikube start --addons "dashboard  ingress ingress-dns" \
+      --alsologtostderr=false --apiserver-ips 127.0.0.1 \
+      --apiserver-name localhost --driver=docker --embed-certs=true --memory=2000m \
+      --wait-timeout=6m0s"
+    EOH
   only_if "su sloeinfra -c 'minikube status' | grep -q 'There is no local cluster'"
 end
 
@@ -81,7 +76,7 @@ script "minikube_restart" do
   interpreter "bash"
   code <<-EOH
     su sloeinfra -c "minikube stop"
-    su sloeinfra -c "minikube start --alsologtostderr=true --delete-on-failure=true --wait-timeout=2m0s"
+    su sloeinfra -c "minikube start --wait-timeout=2m0s"
   EOH
   not_if "su sloeinfra -c 'minikube status' | grep -q 'apiserver: Running'"
 end
