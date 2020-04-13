@@ -17,7 +17,7 @@ fi
 
 SUDO=sudo
 if [ ! -x "$(command -v gitk)" ] ;  then
-  $SUDO apt-get install -y chef git gitk vim
+  $SUDO apt-get install -y git gitk vim
 fi
 
 if [ ! -x "$(command -v code)" ] ;  then

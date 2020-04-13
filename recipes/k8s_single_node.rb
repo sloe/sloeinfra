@@ -76,7 +76,7 @@ script "minikube_restart" do
   interpreter "bash"
   code <<-EOH
     su sloeinfra -c "minikube stop"
-    su sloeinfra -c "minikube start --wait-timeout=2m0s"
+    su sloeinfra -c "minikube start --embed-certs=true --wait-timeout=2m0s"
   EOH
   not_if "su sloeinfra -c 'minikube status' | grep -q 'apiserver: Running'"
 end
