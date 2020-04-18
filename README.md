@@ -12,18 +12,20 @@ To bring up a workstation on Ubuntu 18.04 LTS:
     ./ubuntu-workstation.sh
     # Enter an empty Chef server URL if asked
 
-To install and configure Kubernetes on Docker.  This doesn't install a
- hypervisor (VirtualBox, KVM) but uses the --driver=docker option with
- Minikube, so can run on a VM itself.
+To install and configure Kubernetes nested within Docker.  This doesn't
+install a hypervisor (VirtualBox, KVM) but uses the --driver=docker option
+with Minikube, so can run on a VM itself.
 
     cd ~/r/sloeinfra/bringup
-    # script[minukube_setup] in the command below is a slow step
-    ./k8s-single-node.sh
+    # script[minukube_setup] in the commands below is a slow step
+    ./k8s-single-node.sh docker
+    # To install on the base OS instead, use ./k8s-single-node.sh root
     
     # The sloeinfra user will have been created by the above script,
     # and should be used to manage minikube, although its credentials
     # can be taken from the ~sloeinfra/.kube/config file.
     sudo su - sloeinfra
+
 
 
 ## OVH bringup for Ubuntu 18.04
@@ -33,8 +35,8 @@ First of all, enable the firewall:
     ufw enable
     ufw status verbose
 
-Add the following as /etc/netplan, substituting IPv6 details from the
-control panel:
+Add the following as /etc/netplan/51-cloud-init-ipv6.yaml, substituting IPv6 details
+from the control panel:
 
     network:
       version: 2

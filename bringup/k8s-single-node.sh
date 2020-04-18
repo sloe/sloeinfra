@@ -9,6 +9,21 @@ catch() {
   fi
 }
 
+case $1 in
+root)
+  RECIPE="sloeinfra::k8s_single_node_root"
+  ;;
+docker)
+  RECIPE="sloeinfra::k8s_single_node_docker"
+  ;;
+*)
+  echo "ERROR bad parameter $1: Should be root or docker"
+  exit 1
+  ;;
+esac
+
+echo "Will execute Chef recipe $RECIPE"
+
 SUDO=sudo
 
 mkdir -p ~/packages
@@ -49,7 +64,7 @@ cd sloeinfra
 
 berks vendor cookbooks
 
-sudo chef-client --local-mode --override-runlist sloeinfra::k8s_single_node
+sudo chef-client --local-mode --override-runlist $RECIPE
 
 if [ ! -x "$(command -v helm)" ] ;  then
   $SUDO snap install --classic --channel=2.16/stable helm

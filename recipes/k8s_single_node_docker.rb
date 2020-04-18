@@ -36,6 +36,8 @@ docker_service 'default' do
   dns ['1.1.1.1', '1.0.0.1']
   dns_search []
   ipv6 false
+  logfile '/var/log/docker.log'
+  misc_opts '--exec-opt native.cgroupdriver=systemd'
   action [:create, :start]
 end
 
