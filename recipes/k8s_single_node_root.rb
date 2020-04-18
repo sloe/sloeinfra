@@ -20,27 +20,6 @@ docker_service 'default' do
   action [:create, :start]
 end
 
-docker_image 'busybox' do
-  action :pull
-end
-
-group 'sloeinfra' do
-  gid 10020
-end
-
-user 'sloeinfra' do
-  gid 'sloeinfra'
-  home '/home/sloeinfra'
-  manage_home true
-  shell '/bin/bash'
-  uid 10020
-end
-
-group 'docker' do
-  members ['sloeinfra']
-  action :modify
-end
-
 script "minikube_setup" do
   code <<-EOH
     minikube status
