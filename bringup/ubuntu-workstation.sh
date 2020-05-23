@@ -11,6 +11,12 @@ catch() {
 
 UBUNTU_VERSION=`lsb_release -rs`
 
+snap_bin_path="/snap/bin"
+if [ -n "${PATH##*${snap_bin_path}}" -a -n "${PATH##*${snap_bin_path}:*}" ]; then
+    echo "${snap_bin_path} not in path, is this a login shell (su -)?  Exiting."
+    exit 1
+fi
+
 if [ ! -f ~/.ssh/id_rsa.pub ] ; then
   cat /dev/zero | ssh-keygen -q -N ""
 fi
