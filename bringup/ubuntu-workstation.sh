@@ -23,7 +23,7 @@ fi
 
 SUDO=sudo
 if [ ! -x "$(command -v gitk)" ] ;  then
-  $SUDO apt-get install -y git gitk vim
+  $SUDO apt-get install -y git gitk gnome-tweak-tool vim
 fi
 
 if [ ! -x "$(command -v code)" ] ;  then
@@ -46,8 +46,15 @@ if [ ! -x "$(command -v chef)" ] ;  then
 fi
 
 git config --global core.editor "vim"
-git config --global user.name "Sloe"
-git config --global user.email "4004821+sloe@users.noreply.github.com"
+if [ "$USER" == "andy" ] ; then
+  git config --global user.name "Sloe"
+  git config --global user.email "4004821+sloe@users.noreply.github.com"
+fi
+
+if [ "$USER" == "mushware" ] ; then
+  git config --global user.name "Andy Southgate"
+  git config --global user.email "andy@mushware.com"
+fi
 
 mkdir -p ~/r
 cd ~/r
